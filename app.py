@@ -3,8 +3,6 @@
 # ==============================================================================
 import joblib
 import numpy as np
-import gradio as gr
-import spaces
 from datetime import date
 from typing import Annotated, Literal
 
@@ -422,26 +420,3 @@ async def generate_explanation(request: Request, form_data: Annotated[Conditiona
             print(f"🚨 [UNKNOWN ERROR] {error_type}: Unexpected failure during execution. Details: {error_raw}")
             print("="*70 + "\n")
             raise HTTPException(status_code=500, detail=f"[UNKNOWN ERROR] {error_type}: An unexpected server error occurred during LIME generation. Details: {error_raw}")
-
-# ==============================================================================
-# 9. HUGGING FACE FREE TIER WORKAROUND (ZERO GPU BYPASS)
-# ==============================================================================
-# The Hugging Face ZeroGPU infrastructure strictly requires at least one function 
-# to be decorated with @spaces.GPU to pass the startup health check. 
-# We apply this mandatory decorator to our dummy UI function to bypass the block.
-
-@spaces.GPU
-def bypass_startup_check():
-    return "✅ ZeroGPU Bypass Active! FastAPI is running gracefully in the background."
-
-dummy_ui = gr.Interface(
-    fn=bypass_startup_check,
-    inputs=None,
-    outputs="text",
-    title="Maternal Health API [Backend]"
-)
-
-# Mount this dummy UI to the '/ui' sub-path.
-# Hugging Face scans this, finds the @spaces.GPU decorator, passes the build,
-# and quietly runs our massive FastAPI instance underneath.
-app = gr.mount_gradio_app(app, dummy_ui, path="/ui")
