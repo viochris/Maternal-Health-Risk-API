@@ -78,9 +78,9 @@ High Risk         0.81        0.74     0.77       Solid precision; conservative 
 ![Predict Response](assets/predict_response.png)  
 *Real-time diagnostic prediction output demonstrating calculated risk categories and percentage confidence distributions.*
 
-### 3. Interactive Explainable AI Output (`POST /explain`)
-![LIME Explanation](assets/lime_explanation.png)  
-*Dynamic LIME feature attribution output rendering positive (risk-increasing) and negative (risk-decreasing) clinical driver contributions.*
+### 3. Explainability Endpoint Response (`POST /explain`)
+![Explain Response](assets/explain_response.png)  
+*Raw JSON response from the Swagger docs, showing the `explanation_html` field containing the LIME visualization markup as an HTML string. This string can be extracted and rendered as standalone HTML to view the interactive feature-attribution chart.*
 
 ---
 
