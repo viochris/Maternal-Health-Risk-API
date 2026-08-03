@@ -29,7 +29,7 @@ Maternal mortality and pregnancy-related complications represent critical public
 Machine learning models offer strong capabilities for identifying subtle, multi-parameter health degradation. However, standard tree-based ensembles (e.g., CatBoost, XGBoost) function as opaque mathematical models. Healthcare professionals naturally hesitate to trust automated high-risk predictions without explicit feature attributions that explain *why* a patient is classified as high risk.
 
 ### 💡 Strategic Business & Operational Impact
-1. **Clinical Interpretability & Trust**: By returning real-time visual feature attributions alongside risk class probabilities, the API empowers clinicians to cross-examine model logic against patient vitals (e.g., confirming if elevated systolic blood pressure or high blood glucose drove a high-risk score).
+1. **Clinical Interpretability & Trust**: By returning structured, HTML-based feature attributions (rendered client-side from the API's JSON response) alongside risk class probabilities, the API empowers clinicians to cross-examine model logic against patient vitals (e.g., confirming if elevated systolic blood pressure or high blood glucose drove a high-risk score).
 2. **Standardized Microservice Architecture**: Decouples complex machine learning inference routines from consumer user interfaces (web dashboards, mobile clinic apps), replacing unmaintainable diagnostic scripts with standard REST contracts.
 3. **Upstream Data Integrity**: Enforces strict biological boundary checks at the API gateway layer using Pydantic, preventing corrupted diagnostic readings from reaching the estimator.
 
