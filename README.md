@@ -56,15 +56,15 @@ The production classifier (`best_hp_model.joblib`) was trained and evaluated on 
 ===================================================================================
 RISK TIER         PRECISION   RECALL   F1-SCORE   CLINICAL INTERPRETATION
 ===================================================================================
-Low Risk          0.79        0.73     0.76       Strong boundary isolation for normal vitals.
-Mid Risk          0.33        0.25     0.29       Moderate boundary overlap; flags for human review.
-High Risk         0.83        0.92     0.87       High sensitivity; minimizes missed critical cases.
+Low Risk          0.75        0.91     0.83       Strong sensitivity; reliably filters normal vitals.
+Mid Risk          0.38        0.24     0.29       Significant boundary overlap; flags for human review.
+High Risk         0.81        0.74     0.77       Solid precision; conservative on borderline cases.
 ===================================================================================
 ```
 
-* **High Risk Sensitivity ($F1 = 0.87$)**: The model achieves high recall ($0.92$) on high-risk maternal patients, minimizing false negatives where critical emergency intervention is needed.
-* **Low Risk Accuracy ($F1 = 0.76$)**: Accurately filters out healthy patients, conserving clinical resources in overburdened facilities.
-* **Mid-Risk Boundary Overlap ($F1 = 0.29$)**: Intermediate physiological vitals frequently overlap with mild high-risk or elevated low-risk baseline states, creating higher classification variance for this sub-cohort.
+* **Low Risk Sensitivity (F1 = 0.83)**: The model achieves high recall (0.91) on low-risk patients, reliably filtering out healthy pregnancies and conserving clinical resources in overburdened facilities.
+* **High Risk Precision (F1 = 0.77)**: When the model flags a patient as high risk (precision 0.81), that flag is usually correct, though its recall (0.74) means some high-risk cases are still missed and warrant a safety net of manual review.
+* **Mid-Risk Boundary Overlap (F1 = 0.29)**: Intermediate physiological vitals frequently overlap with mild high-risk or elevated low-risk baseline states, creating higher classification variance for this sub-cohort.
 
 ---
 
@@ -119,7 +119,7 @@ graph TD
     K --> L["Instantiate LimeTabularExplainer on Dense Training Set"]
     L --> M["Compute Local Perturbations (Top 10 Drivers)"]
     M --> N["Export Interactive HTML String"]
-    N --> O["Return Raw HTML Response"]
+    N --> O["Return JSON Payload (explanation_html field)"]
 ```
 *Note: This architecture diagram is AI-generated using Mermaid.js. If you encounter rendering issues on certain platforms, minor manual syntax adjustments (e.g., escaping special characters or fixing subgraph IDs) may be required.*
 
@@ -202,12 +202,10 @@ curl -X 'POST' \
 ```json
 {
   "prediction": "high risk",
-  "confidence": "88.42%",
-  "probabilities": {
-    "low_risk": 0.0215,
-    "mid_risk": 0.0943,
-    "high_risk": 0.8842
-  }
+  "prediction_conf": "88.42%",
+  "low_risk_score": 0.02,
+  "mid_risk_score": 0.09,
+  "high_risk_score": 0.88
 }
 ```
 
@@ -215,12 +213,19 @@ curl -X 'POST' \
 ```bash
 curl -X 'POST' \
   'http://127.0.0.1:8000/explain' \
-  -H 'accept: text/html' \
+  -H 'accept: application/json' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  -d 'age=35&systolic_bp=140&diastolic_bp=90&blood_glucose=13.0&body_temp=98.0&heart_rate=70' \
-  --output explanation.html
+  -d 'age=35&systolic_bp=140&diastolic_bp=90&blood_glucose=13.0&body_temp=98.0&heart_rate=70'
 ```
-*Open `explanation.html` in any web browser to view the interactive LIME visual feature contributions.*
+
+##### Example JSON Response:
+```json
+{
+  "explanation_html": "<html>... interactive LIME visualization markup ...</html>"
+}
+```
+
+The response is a **JSON object** whose single field, `explanation_html`, contains the LIME visualization as an HTML string — it is not raw HTML returned directly by the endpoint. To view it in a browser, extract that field's value first (e.g., with `jq -r .explanation_html response.json > explanation.html`, or by parsing the JSON client-side) before saving/opening it as an `.html` file.
 
 ---
 
