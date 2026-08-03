@@ -195,6 +195,8 @@ async def home() -> dict:
         "service": "Maternal Health Risk Prediction & LIME Explanation API",
         "version": "1.0.1",
         "live_urls": {
+            # [NOTE]: The URLs provided below are purely illustrative examples.
+            # They do not reflect the actual live server environment.
             "base_url": "https://silvio0-maternal-health-api.hf.space",
             "documentation": "https://silvio0-maternal-health-api.hf.space/docs",
             "prediction_endpoint": "https://silvio0-maternal-health-api.hf.space/predict",

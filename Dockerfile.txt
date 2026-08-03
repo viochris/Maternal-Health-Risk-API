@@ -1,0 +1,31 @@
+# ==============================================================================
+# DOCKERFILE FOR MATERNAL HEALTH RISK PREDICTION API
+# ==============================================================================
+
+# 1. Use a lightweight official Python base image to keep the container fast and small
+# Python 3.10 is highly stable for modern ML libraries like CatBoost and Scikit-Learn 1.6+
+FROM python:3.10-slim
+
+# 2. Set the working directory inside the container
+WORKDIR /app
+
+# 3. Copy requirements first (optimizes Docker cache for faster rebuilds)
+COPY requirements.txt .
+
+# 4. Install dependencies
+# --no-cache-dir reduces image size by preventing pip from caching packages
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# 5. Copy all application code (main.py, function.py, and model folders) into the container
+COPY . .
+
+# 6. Adjust directory permissions
+# Essential for cloud deployments (like Hugging Face Spaces) to allow read/write operations
+RUN chmod -R 777 /app
+
+# 7. Command to start the FastAPI server
+# IMPORTANT: "main:app" points to the 'app' object inside 'main.py'
+# If your FastAPI file is named 'api.py', change this to "api:app"
+# Port 7860 is the default port required by Hugging Face Spaces Docker environments
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
