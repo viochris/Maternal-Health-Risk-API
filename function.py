@@ -184,7 +184,7 @@ def explain(best_model, feature_names, X_train_processed: np.ndarray, df_testing
             data_row=status_data_1d,
             predict_fn=ml_model.predict_proba,
             num_features=10,
-            top_labels=len(target_labels)
+            top_labels=len(target_labels) if len(target_labels) > 2 else 1
         )
         
         print("✅ [XAI] LIME HTML generation complete.")
