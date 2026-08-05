@@ -117,7 +117,7 @@ app = FastAPI(
     version="1.0.1",
     description="""
     An AI-powered diagnostic API designed to predict maternal health risks during pregnancy.
-    Integrates XGBoost/CatBoost algorithms with LIME Explainable AI for transparent medical insights.
+    Integrates a hyperparameter-tuned CatBoost model with LIME Explainable AI for transparent medical insights.
     """,
     lifespan=lifespan  # Attaching the lifespan manager we built earlier
 )
